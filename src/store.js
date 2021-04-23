@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import defaultBoard from './default-board'
-import { saveStatePlugin } from './utils'
+import { saveStatePlugin, uuid } from './utils'
 
 Vue.use(Vuex)
 
@@ -12,5 +12,26 @@ export default new Vuex.Store({
   state: {
     board
   },
-  mutations: {}
+  getters: {
+    getTask(state) {
+      return (id) => {
+        for (const column of state.board.columns) {
+          for (const task of column.tasks) {
+            if (task.id === id) {
+              return task
+            }
+          }
+        }
+      }
+    }
+  },
+  mutations: {
+    CREATE_TASK(state, { tasks, name }) {
+      tasks.push({
+        name,
+        id: uuid(),
+        description: ''
+      })
+    }
+  }
 })

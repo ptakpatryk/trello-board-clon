@@ -1,5 +1,6 @@
 <template>
   <div class="board">
+
     <div class="flex fex-row items-start">
       <div class="column" v-for="column of board.columns" :key="column.name">
         <div class="flex items-center mb-2 font-bold">
@@ -9,7 +10,9 @@
           <div
             class="task"
             v-for="task of column.tasks"
+            :data-id="task.id"
             :key="task.id"
+            @click="goToTask(task)"
           >
             <span class="w-full flex-no-shrink font-bold">
               {{ task.name }}
@@ -18,8 +21,23 @@
               {{ task.description }}
             </p>
           </div>
+
+          <input
+            type="text"
+            class="block p-2 w-full bg-transparent"
+            placeholder="+ Enter new task"
+            @keyup.enter="createTask($event, column.tasks)"
+          >
         </div>
       </div>
+    </div>
+
+    <div
+      class="task-bg"
+      v-if="isTaskOpen"
+      @click.self="closeTask"
+    >
+      <router-view/>
     </div>
   </div>
 </template>
@@ -28,7 +46,28 @@
 import { mapState } from 'vuex'
 
 export default {
-  computed: mapState(['board'])
+  computed: {
+    ...mapState(['board']),
+    isTaskOpen() {
+      return this.$route.name === 'task'
+    }
+  },
+  methods: {
+    goToTask(task) {
+      this.$router.push({ name: 'task', params: { id: task.id } })
+    },
+    closeTask() {
+      this.$router.push({ name: 'board' })
+    },
+    createTask(e, tasks) {
+      this.$store.commit('CREATE_TASK', {
+        tasks,
+        name: e.target.value
+      })
+
+      e.target.value = ''
+    }
+  }
 }
 </script>
 

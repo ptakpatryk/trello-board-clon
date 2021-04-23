@@ -2,16 +2,25 @@
   <div class="board">
 
     <div class="flex fex-row items-start">
-      <div class="column" v-for="column of board.columns" :key="column.name">
+      <div
+        class="column"
+        v-for="(column, $columnIndex) of board.columns"
+        :key="column.name"
+        @drop="moveTask($event, column.tasks)"
+        @dragover.prevent
+        @dragenter.prevent
+      >
         <div class="flex items-center mb-2 font-bold">
           {{ column.name }}
         </div>
         <div class="list-reset">
           <div
             class="task"
-            v-for="task of column.tasks"
+            v-for="(task, $taskIndex) of column.tasks"
             :data-id="task.id"
             :key="task.id"
+            draggable
+            @dragstart="pickupTask($event, $taskIndex, $columnIndex)"
             @click="goToTask(task)"
           >
             <span class="w-full flex-no-shrink font-bold">
@@ -48,24 +57,42 @@ import { mapState } from 'vuex'
 export default {
   computed: {
     ...mapState(['board']),
-    isTaskOpen() {
+    isTaskOpen () {
       return this.$route.name === 'task'
     }
   },
   methods: {
-    goToTask(task) {
+    goToTask (task) {
       this.$router.push({ name: 'task', params: { id: task.id } })
     },
-    closeTask() {
+    closeTask () {
       this.$router.push({ name: 'board' })
     },
-    createTask(e, tasks) {
+    createTask (e, tasks) {
       this.$store.commit('CREATE_TASK', {
         tasks,
         name: e.target.value
       })
 
       e.target.value = ''
+    },
+    pickupTask (e, taskIndex, fromColIndex) {
+      e.dataTransfer.effectAllowed = 'move'
+      e.dataTransfer.dropEffect = 'move'
+      e.dataTransfer.setData('task-index', taskIndex)
+      e.dataTransfer.setData('from-column-index', fromColIndex)
+    },
+    moveTask (e, toColumn) {
+      console.log(e)
+      const taskIndex = e.dataTransfer.getData('task-index')
+      const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+      const fromColumn = this.board.columns[fromColumnIndex].tasks
+
+      this.$store.commit('MOVE_TASK', {
+        fromColumn,
+        toColumn,
+        taskIndex
+      })
     }
   }
 }

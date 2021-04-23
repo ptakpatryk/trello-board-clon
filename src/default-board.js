@@ -23,6 +23,24 @@ export default {
           name: 'and thrid',
           id: uuid(),
           userAssigned: null
+        },
+        {
+          description: '',
+          name: 'Ziemniaczki',
+          id: uuid(),
+          userAssigned: null
+        },
+        {
+          description: '',
+          name: 'Kurczaczki',
+          id: uuid(),
+          userAssigned: null
+        },
+        {
+          description: 'Smaczki',
+          name: 'Warchlaczki',
+          id: uuid(),
+          userAssigned: null
         }
       ]
     },
@@ -30,8 +48,26 @@ export default {
       name: 'in-progress',
       tasks: [
         {
-          description: '',
-          name: 'first task',
+          description: 'Jedyneczka',
+          name: '1',
+          id: uuid(),
+          userAssigned: null
+        },
+        {
+          description: 'Dwojeczka',
+          name: '2',
+          id: uuid(),
+          userAssigned: null
+        },
+        {
+          description: 'Trojeczka',
+          name: '3',
+          id: uuid(),
+          userAssigned: null
+        },
+        {
+          description: 'Czworeczka',
+          name: '4',
           id: uuid(),
           userAssigned: null
         }

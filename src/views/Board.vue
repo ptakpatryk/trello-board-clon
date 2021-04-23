@@ -12,9 +12,9 @@
         @dragover.prevent
         @dragenter.prevent
       >
-        <div class="flex items-center mb-2 font-bold">
+        <h3 class=" mb-4 font-bold text-center py-2 uppercase">
           {{ column.name }}
-        </div>
+        </h3>
         <div class="list-reset">
           <div
             class="task"
@@ -24,6 +24,9 @@
             draggable
             @dragstart="pickupTask($event, $taskIndex, $columnIndex)"
             @click="goToTask(task)"
+            @dragover.prevent
+            @dragenter.prevent
+            @drop.stop="dropElement($event, $columnIndex, $taskIndex)"
           >
             <span class="w-full flex-no-shrink font-bold">
               {{ task.name }}
@@ -47,6 +50,7 @@
       class="task-bg"
       v-if="isTaskOpen"
       @click.self="closeTask"
+      @keydown.esc="closeTask"
     >
       <router-view/>
     </div>
@@ -81,7 +85,7 @@ export default {
     pickupTask (e, taskIndex, fromColIndex) {
       e.dataTransfer.effectAllowed = 'move'
       e.dataTransfer.dropEffect = 'move'
-      e.dataTransfer.setData('task-index', taskIndex)
+      e.dataTransfer.setData('from-task-index', taskIndex)
       e.dataTransfer.setData('from-tasks-index', fromColIndex)
       e.dataTransfer.setData('type', 'task')
     },
@@ -91,25 +95,27 @@ export default {
       e.dataTransfer.setData('from-column-index', fromColumnIndex)
       e.dataTransfer.setData('type', 'column')
     },
-    dropElement (e, toColumnIndex) {
+    dropElement (e, toColumnIndex, toTaskIndex) {
       const droppedElType = e.dataTransfer.getData('type')
 
       if (droppedElType === 'task') {
-        this.moveTask(e, toColumnIndex)
+        this.moveTask(e, toColumnIndex, toTaskIndex !== undefined ? toTaskIndex : null)
       } else if (droppedElType === 'column') {
         this.moveColumn(e, toColumnIndex)
       }
     },
-    moveTask (e, toColumnIndex) {
-      const taskIndex = e.dataTransfer.getData('task-index')
+    moveTask (e, toColumnIndex, toTaskIndex) {
+      const fromTaskIndex = e.dataTransfer.getData('from-task-index')
       const fromTasksIndex = e.dataTransfer.getData('from-tasks-index')
       const fromTasks = this.board.columns[fromTasksIndex].tasks
       const toTasks = this.board.columns[toColumnIndex].tasks
+      toTaskIndex = toTaskIndex !== null ? toTaskIndex : toTasks.length
 
       this.$store.commit('MOVE_TASK', {
         fromTasks,
         toTasks,
-        taskIndex
+        fromTaskIndex,
+        toTaskIndex
       })
     },
     moveColumn (e, toColumnIndex) {
@@ -126,16 +132,20 @@ export default {
 
 <style lang="css">
 .task {
-  @apply flex items-center flex-wrap shadow mb-2 py-2 px-2 rounded bg-white text-grey-darkest no-underline;
+  @apply flex items-center flex-wrap shadow mb-3 p-3 rounded bg-white text-grey-darkest no-underline;
 }
 
 .column {
-  @apply bg-grey-light p-2 mr-4 text-left shadow rounded;
+  @apply bg-grey-light p-4 mr-4 text-left shadow rounded-lg;
   min-width: 350px;
 }
 
 .board {
-  @apply p-4 bg-teal-dark h-full overflow-auto;
+  @apply p-4 h-full overflow-auto;
+
+  background: #4e54c8;  /* fallback for old browsers */
+  background: linear-gradient(to right, #8f94fb, #4e54c8); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
 }
 
 .task-bg {

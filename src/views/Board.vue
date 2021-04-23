@@ -95,23 +95,30 @@ export default {
       const droppedElType = e.dataTransfer.getData('type')
 
       if (droppedElType === 'task') {
-        const taskIndex = e.dataTransfer.getData('task-index')
-        const fromTasksIndex = e.dataTransfer.getData('from-tasks-index')
-        const fromTasks = this.board.columns[fromTasksIndex].tasks
-        const toTasks = this.board.columns[toColumnIndex].tasks
-
-        this.$store.commit('MOVE_TASK', {
-          fromTasks,
-          toTasks,
-          taskIndex
-        })
+        this.moveTask(e, toColumnIndex)
       } else if (droppedElType === 'column') {
-        const fromColumnIndex = e.dataTransfer.getData('from-column-index');
-        this.$store.commit('MOVE_COLUMN', {
-          fromColumnIndex,
-          toColumnIndex
-        })
+        this.moveColumn(e, toColumnIndex)
       }
+    },
+    moveTask (e, toColumnIndex) {
+      const taskIndex = e.dataTransfer.getData('task-index')
+      const fromTasksIndex = e.dataTransfer.getData('from-tasks-index')
+      const fromTasks = this.board.columns[fromTasksIndex].tasks
+      const toTasks = this.board.columns[toColumnIndex].tasks
+
+      this.$store.commit('MOVE_TASK', {
+        fromTasks,
+        toTasks,
+        taskIndex
+      })
+    },
+    moveColumn (e, toColumnIndex) {
+      const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+
+      this.$store.commit('MOVE_COLUMN', {
+        fromColumnIndex,
+        toColumnIndex
+      })
     }
   }
 }

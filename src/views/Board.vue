@@ -6,7 +6,9 @@
         class="column"
         v-for="(column, $columnIndex) of board.columns"
         :key="column.name"
-        @drop="moveTask($event, column.tasks)"
+        draggable
+        @dragstart.self="pickupColumn($event, $columnIndex)"
+        @drop="dropElement($event, $columnIndex)"
         @dragover.prevent
         @dragenter.prevent
       >
@@ -80,19 +82,36 @@ export default {
       e.dataTransfer.effectAllowed = 'move'
       e.dataTransfer.dropEffect = 'move'
       e.dataTransfer.setData('task-index', taskIndex)
-      e.dataTransfer.setData('from-column-index', fromColIndex)
+      e.dataTransfer.setData('from-tasks-index', fromColIndex)
+      e.dataTransfer.setData('type', 'task')
     },
-    moveTask (e, toColumn) {
-      console.log(e)
-      const taskIndex = e.dataTransfer.getData('task-index')
-      const fromColumnIndex = e.dataTransfer.getData('from-column-index')
-      const fromColumn = this.board.columns[fromColumnIndex].tasks
+    pickupColumn (e, fromColumnIndex) {
+      e.dataTransfer.effectAllowed = 'move'
+      e.dataTransfer.dropEffect = 'move'
+      e.dataTransfer.setData('from-column-index', fromColumnIndex)
+      e.dataTransfer.setData('type', 'column')
+    },
+    dropElement (e, toColumnIndex) {
+      const droppedElType = e.dataTransfer.getData('type')
 
-      this.$store.commit('MOVE_TASK', {
-        fromColumn,
-        toColumn,
-        taskIndex
-      })
+      if (droppedElType === 'task') {
+        const taskIndex = e.dataTransfer.getData('task-index')
+        const fromTasksIndex = e.dataTransfer.getData('from-tasks-index')
+        const fromTasks = this.board.columns[fromTasksIndex].tasks
+        const toTasks = this.board.columns[toColumnIndex].tasks
+
+        this.$store.commit('MOVE_TASK', {
+          fromTasks,
+          toTasks,
+          taskIndex
+        })
+      } else if (droppedElType === 'column') {
+        const fromColumnIndex = e.dataTransfer.getData('from-column-index');
+        this.$store.commit('MOVE_COLUMN', {
+          fromColumnIndex,
+          toColumnIndex
+        })
+      }
     }
   }
 }

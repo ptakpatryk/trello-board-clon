@@ -13,7 +13,7 @@ export default new Vuex.Store({
     board
   },
   getters: {
-    getTask(state) {
+    getTask (state) {
       return (id) => {
         for (const column of state.board.columns) {
           for (const task of column.tasks) {
@@ -26,12 +26,20 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    CREATE_TASK(state, { tasks, name }) {
+    CREATE_TASK (state, { tasks, name }) {
       tasks.push({
         name,
         id: uuid(),
         description: ''
       })
+    },
+    UPDATE_TASK (state, { task, type, value }) {
+      task[type] = value
+      // Vue.set(task, key, value)
+    },
+    MOVE_TASK (state, { fromColumn, toColumn, taskIndex }) {
+      const taskToMove = fromColumn.splice(taskIndex, 1)[0]
+      toColumn.push(taskToMove)
     }
   }
 })

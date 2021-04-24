@@ -1,43 +1,50 @@
 <template>
-  <div
-    class="column"
-    draggable
-    @dragstart.self="pickupColumn($event, columnIndex)"
-    @drop="dropElement($event, columnIndex)"
-    @dragover.prevent
-    @dragenter.prevent
+  <AppDrop
+    @drop="dropElement"
   >
-    <h3 class=" mb-4 font-bold text-center py-2 uppercase">
-      {{ column.name }}
-    </h3>
-    <div class="list-reset">
-      <BoardColumnTask
-        v-for="(task, $taskIndex) of column.tasks"
-        :key="task.id"
-        :task="task"
-        :taskIndex="$taskIndex"
-        :columnIndex="columnIndex"
-        :board="board"
-      />
+    <AppDrag
+      class="column"
+      :transferData="{
+        type: 'column',
+        fromColumnIndex: columnIndex
+      }"
+    >
+      <h3 class=" mb-4 font-bold text-center py-2 uppercase">
+        {{ column.name }}
+      </h3>
+      <div class="list-reset">
+        <BoardColumnTask
+          v-for="(task, $taskIndex) of column.tasks"
+          :key="task.id"
+          :task="task"
+          :taskIndex="$taskIndex"
+          :columnIndex="columnIndex"
+          :board="board"
+        />
 
-      <input
-        type="text"
-        class="block p-2 w-full bg-transparent"
-        placeholder="+ Enter new task"
-        @keyup.enter="createTask($event, column.tasks)"
-      >
-    </div>
-  </div>
+        <input
+          type="text"
+          class="block p-2 w-full bg-transparent"
+          placeholder="+ Enter new task"
+          @keyup.enter="createTask($event, column.tasks)"
+        >
+      </div>
+    </AppDrag>
+  </AppDrop>
 </template>
 
 <script>
 import BoardColumnTask from './BoardColumnTask.vue'
+import AppDrag from './AppDrag'
+import AppDrop from './AppDrop'
 import movingMixin from '../mixins/movingTasksAndColumnsMixin'
 
 export default {
   mixins: [movingMixin],
   components: {
-    BoardColumnTask
+    BoardColumnTask,
+    AppDrag,
+    AppDrop
   },
   methods: {
     createTask (e, tasks) {

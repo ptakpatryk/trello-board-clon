@@ -14,35 +14,28 @@ export default {
     }
   },
   methods: {
-    dropElement (e, toColumnIndex, toTaskIndex) {
-      const droppedElType = e.dataTransfer.getData('type')
-
-      if (droppedElType === 'task') {
-        this.moveTask(e, toColumnIndex, toTaskIndex !== undefined ? toTaskIndex : null)
-      } else if (droppedElType === 'column') {
-        this.moveColumn(e, toColumnIndex)
+    dropElement (transferData) {
+      if (transferData.type === 'task') {
+        this.moveTask(transferData)
+      } else if (transferData.type === 'column') {
+        this.moveColumn(transferData)
       }
     },
-    moveTask (e, toColumnIndex, toTaskIndex) {
-      const fromTaskIndex = e.dataTransfer.getData('from-task-index')
-      const fromTasksIndex = e.dataTransfer.getData('from-tasks-index')
-      const fromTasks = this.board.columns[fromTasksIndex].tasks
-      const toTasks = this.board.columns[toColumnIndex].tasks
-      toTaskIndex = toTaskIndex !== null ? toTaskIndex : toTasks.length
-
+    moveTask ({ fromColumnIndex, fromTaskIndex }) {
+      const fromTasks = this.board.columns[fromColumnIndex].tasks
+      
       this.$store.commit('MOVE_TASK', {
         fromTasks,
-        toTasks,
         fromTaskIndex,
-        toTaskIndex
+        // Belowed are taken from the current component props
+        toTasks: this.board.columns[this.columnIndex].tasks,
+        toTaskIndex: this.taskIndex
       })
     },
-    moveColumn (e, toColumnIndex) {
-      const fromColumnIndex = e.dataTransfer.getData('from-column-index')
-
+    moveColumn ({ fromColumnIndex }) {
       this.$store.commit('MOVE_COLUMN', {
         fromColumnIndex,
-        toColumnIndex
+        toColumnIndex: this.columnIndex
       })
     }
   }

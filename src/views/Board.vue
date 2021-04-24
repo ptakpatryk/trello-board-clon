@@ -31,7 +31,7 @@
       class="task-bg"
       v-if="isTaskOpen"
       @click.self="closeTask"
-      @keydown.esc="closeTask"
+      @keyup.esc="closeTask"
     >
       <router-view/>
     </div>

@@ -40,7 +40,9 @@ export default new Vuex.Store({
       })
     },
     UPDATE_TASK (state, { task, type, value }) {
-      task[type] = value
+      if (task !== undefined) {
+        task[type] = value
+      }
       // Vue.set(task, key, value)
     },
     MOVE_TASK (state, { fromTasks, toTasks, fromTaskIndex, toTaskIndex }) {

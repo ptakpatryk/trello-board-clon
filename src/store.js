@@ -33,6 +33,12 @@ export default new Vuex.Store({
         description: ''
       })
     },
+    CREATE_COLUMN (state, { columnName }) {
+      state.board.columns.push({
+        name: columnName,
+        tasks: []
+      })
+    },
     UPDATE_TASK (state, { task, type, value }) {
       task[type] = value
       // Vue.set(task, key, value)

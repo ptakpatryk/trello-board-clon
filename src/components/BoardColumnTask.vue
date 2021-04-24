@@ -19,12 +19,10 @@
 </template>
 
 <script>
+import movingMixin from '../mixins/movingTasksAndColumnsMixin'
+
 export default {
   props: {
-    board: {
-      type: Object,
-      required: true
-    },
     task: {
       type: Object,
       required: true
@@ -32,12 +30,9 @@ export default {
     taskIndex: {
       type: Number,
       required: true
-    },
-    columnIndex: {
-      type: Number,
-      required: true
     }
   },
+  mixins: [movingMixin],
   methods: {
     goToTask (task) {
       this.$router.push({ name: 'task', params: { id: task.id } })
@@ -48,37 +43,6 @@ export default {
       e.dataTransfer.setData('from-task-index', taskIndex)
       e.dataTransfer.setData('from-tasks-index', fromColIndex)
       e.dataTransfer.setData('type', 'task')
-    },
-    moveTask (e, toColumnIndex, toTaskIndex) {
-      const fromTaskIndex = e.dataTransfer.getData('from-task-index')
-      const fromTasksIndex = e.dataTransfer.getData('from-tasks-index')
-      const fromTasks = this.board.columns[fromTasksIndex].tasks
-      const toTasks = this.board.columns[toColumnIndex].tasks
-      toTaskIndex = toTaskIndex !== null ? toTaskIndex : toTasks.length
-
-      this.$store.commit('MOVE_TASK', {
-        fromTasks,
-        toTasks,
-        fromTaskIndex,
-        toTaskIndex
-      })
-    },
-    dropElement (e, toColumnIndex, toTaskIndex) {
-      const droppedElType = e.dataTransfer.getData('type')
-
-      if (droppedElType === 'task') {
-        this.moveTask(e, toColumnIndex, toTaskIndex !== undefined ? toTaskIndex : null)
-      } else if (droppedElType === 'column') {
-        this.moveColumn(e, toColumnIndex)
-      }
-    },
-    moveColumn (e, toColumnIndex) {
-      const fromColumnIndex = e.dataTransfer.getData('from-column-index')
-
-      this.$store.commit('MOVE_COLUMN', {
-        fromColumnIndex,
-        toColumnIndex
-      })
     }
   }
 }

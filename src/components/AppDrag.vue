@@ -19,8 +19,6 @@ export default {
   },
   methods: {
     onDrag (e) {
-      console.log('drag')
-      console.log(this.transferData)
       e.dataTransfer.effectAllowed = 'move'
       e.dataTransfer.dropEffect = 'move'
 

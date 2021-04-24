@@ -3,20 +3,23 @@
     @drop="dropElement"
   >
     <AppDrag
-      class="task"
-      @click="goToTask(task)"
       :transferData="{
         type: 'task',
         fromColumnIndex: columnIndex,
         fromTaskIndex: taskIndex
       }"
     >
-      <span class="w-full flex-no-shrink font-bold">
-        {{ task.name }}
-      </span>
-      <p v-if="task.description" class="w-full flex-no-shrink mt-1 text-sm">
-        {{ task.description }}
-      </p>
+      <div
+        class="task"
+        @click="goToTask(task)"
+      >
+        <span class="w-full flex-no-shrink font-bold">
+          {{ task.name }}
+        </span>
+        <p v-if="task.description" class="w-full flex-no-shrink mt-1 text-sm">
+          {{ task.description }}
+        </p>
+      </div>
     </AppDrag>
   </AppDrop>
 </template>

@@ -23,7 +23,7 @@ export default {
     },
     moveTask ({ fromColumnIndex, fromTaskIndex }) {
       const fromTasks = this.board.columns[fromColumnIndex].tasks
-      
+
       this.$store.commit('MOVE_TASK', {
         fromTasks,
         fromTaskIndex,
